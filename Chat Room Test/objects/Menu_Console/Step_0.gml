@@ -73,7 +73,15 @@ if (keyboard_check(vk_enter))
 						break;
 						
 						default:
-						
+							ds_list_insert(lines, 0, clientMessage)
+							
+							var messageBuffer = buffer_create(2, buffer_grow, 1)
+							buffer_write(messageBuffer, buffer_u8, Data.userMessage)
+							buffer_write(messageBuffer, buffer_string, keyboard_string)
+							network_send_packet(res, messageBuffer, buffer_sizeof(messageBuffer))
+							buffer_delete(messageBuffer)
+							keyboard_string = "";
+							
 						break;
 					}
 				break;
@@ -90,6 +98,16 @@ if (keyboard_check(vk_enter))
 						
 						default:
 							ds_list_insert(lines, 0, clientMessage)
+							
+							var messageBuffer = buffer_create(2, buffer_grow, 1)
+							buffer_write(messageBuffer, buffer_u8, Data.userMessage)
+							buffer_write(messageBuffer, buffer_string, keyboard_string)
+							for (var i = 0; i < ds_list_size(clients); i++)
+							{
+								network_send_packet(res, messageBuffer, buffer_sizeof(messageBuffer))	
+							}
+							
+							buffer_delete(messageBuffer)
 							keyboard_string = "";
 						break;
 					}
